@@ -1,0 +1,59 @@
+﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:37883",
+      "sslPort": 44350
+    }
+  },
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:5085",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "PosSalt": "+_)(teste&",
+        "PreSalt": "teste#~;",
+        "MySqlConnectionString": "server=localhost;user=root;password=123456789;Allow User Variables=true;IgnoreCommandTransaction=true;database=testeDotnet",
+        "SecretJwt": "@J6[{&!jd8#}hAiO_$u3f",
+        "AuthenticationTimeInMinutes": "120",
+        "AccessToken": "4443a17e-2c82-4cd4"
+      }
+    },
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:7210;http://localhost:5085",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "PosSalt": "+_)(teste&",
+        "PreSalt": "teste#~;",
+        "MySqlConnectionString": "server=localhost;user=root;password=123456789;Allow User Variables=true;IgnoreCommandTransaction=true;database=testeDotnet",
+        "SecretJwt": "@THMPhpwqdmndd[lcnslw$01]{&!jd8#}kfgjaprmb2^40+djl=%-hAiO_$u39aaaaaaa",
+        "AuthenticationTimeInMinutes": "120",
+        "AccessToken": "ea98f38e-9cc9-4924-a5c1-43ff229d2915"
+      }
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "PosSalt": "+_)(teste&",
+        "PreSalt": "teste#~;",
+        "MySqlConnectionString": "server=localhost;user=root;password=123456789;Allow User Variables=true;IgnoreCommandTransaction=true;database=testeDotnet",
+        "SecretJwt": "@J6[{&!jd8#}hAiO_$u3f",
+        "AuthenticationTimeInMinutes": "120",
+        "AccessToken": "4443a17e-2c82-4cd4"
+      }
+    }
+  }
+}
