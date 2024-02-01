@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Exemplo de notificação em signalR</title>
+    <style>
+        body {
+            background-color: lightgray;
+            padding: 0px;
+            margin: 0px;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+            justify-content: center;
+        }
+
+        .box-notifications {
+            display: flex;
+            background-color: lightblue;
+            justify-content: flex-start;
+            height: 100%;
+            width: 100%;
+            flex-direction: column;
+            align-items: normal;
+        }
+
+        .notifications {
+            border: solid;
+            border-radius: 15px;
+            padding: 2px;
+            margin: 2px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .help {
+            padding: 0px;
+            margin: 0px;
+            width: 100%;
+            justify-content: center;
+            display: flex;
+        }
+
+        .link {
+            border: solid;
+            border-radius: 10px;
+            padding: 2px;
+            margin: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="help">
+        <h4 id="txtHelp"></h4>
+    </div>
+    <div id="messageList" class="box-notifications">
+        <div id="componente1" class="notifications">
+            <h4>[[message]]</h4>
+            <a class="link" target="_blank" href="[[link]]">Ir para o post</a>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:7210/notificationHub")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        function log(msg) {
+            document.getElementById("txtHelp").innerText = msg;
+        }
+
+        async function start() {
+            try {
+                await connection.start();
+                log("SignalR Connected.");
+            } catch (err) {
+                log(err);
+                setTimeout(start, 5000);
+            }
+        };
+
+        connection.onclose(async () => {
+            await start();
+        });
+
+        const notifcation = document.getElementById("componente1");
+        notifcation.remove();
+        var htmlNotification = notifcation.outerHTML;
+
+        function apd(message, id) {
+            var replaced = htmlNotification
+                .replace('[[message]]', message)
+                .replace('[[link]]', `https://localhost:7210/${id}`);
+            var element = document.createElement("div");
+            element.innerHTML = replaced;
+            document.getElementById("messageList").prepend(element);
+        }
+
+        connection.on("ReceiveNotification", (message, postId) => {
+            apd(message, postId);
+        });
+
+        start();
+
+        fetch("https://localhost:7210/Blog?StartIndex=0&PageLength=100&Draw=1").then(response => {
+            response.json().then(parsedValue => {
+                for (var i = 0; i < parsedValue.data.length; i++) {
+                    var notification = parsedValue.data[i];
+                    apd(notification.title, notification.id);
+                }
+            })
+        });
+
+    </script>
+</body>
+</html>

@@ -1,62 +1,66 @@
-﻿using Application.Boudary.User;
-using Application.Command.User;
+﻿using Application.Boudary.Post;
+using Application.Command.Post;
 using Domain.Entity.User;
 using Domain.Interface.Cryptography;
 using Infrastructure.Message;
 using Infrastructure.Message.Interface;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 
-namespace Application.Handler.User
+namespace Application.Handler.Post
 {
-    public class UserHandler : IRequestHandler<CreateUserCommand, CreateUserOutput>
+    public class GetPostHandler : IRequestHandler<GetPostCommand, GetPostOutput>
     {
         private readonly IMessagesHandler _messagesHandler;
         private readonly GenericRepository<UserEntity, int> _userRepository;
+        private readonly GenericRepository<PostEntity, int> _postRepository;
         private readonly ISha _sha;
+        private readonly IHttpContextAccessor _accessor;
 
-        public UserHandler(IMessagesHandler messagesHandler,
+        public GetPostHandler(IMessagesHandler messagesHandler,
                            GenericRepository<UserEntity, int> userRepository,
-                           ISha sha)
+                           ISha sha,
+                           GenericRepository<PostEntity, int> postRepository,
+                           IHttpContextAccessor accessor)
         {
             _messagesHandler = messagesHandler;
             _userRepository = userRepository;
             _sha = sha;
+            _postRepository = postRepository;
+            _accessor = accessor;
         }
 
-        public async Task<CreateUserOutput> Handle(CreateUserCommand command, CancellationToken cancellationToken)
+        public async Task<GetPostOutput> Handle(GetPostCommand command, CancellationToken cancellationToken)
         {
             if (command.IsValid())
             {
                 await _userRepository
-                       .BeginTransactionAsync(false)
+                       .BeginTransactionAsync(true)
                        .ConfigureAwait(false);
 
-                var alreadyUser = await _userRepository
-                     .DbSet
-                     .FirstOrDefaultAsync(d => d.Email == command.Input.Email);
+                var post = await _postRepository
+                    .DbSet
+                    .FirstOrDefaultAsync(post => post.Id == command.Input.Id)
+                    .ConfigureAwait(false);
 
-                if (alreadyUser != null)
+                if (post == null)
                 {
-                    _ = this.ApplyErrorAsync("Esse email já está cadastrado em nossa base de dados.");
+                    _ = ApplyErrorAsync("Post não encontrado.");
                     return null;
                 }
 
-                var user = new UserEntity
-                {
-                    Name = command.Input.Name,
-                    Email = command.Input.Email,
-                    CreateDate = DateTime.UtcNow,
-                    Active = true,
-                    Password = _sha.Encrypt(command.Input.Password)
-                };
-
-                await _userRepository.SaveAsync(user);
-
                 await _userRepository.CommitTransactionAsync();
 
-                return new CreateUserOutput(user.Name, user.Email);
+                return new GetPostOutput
+                {
+                    Id = post.Id,
+                    Title = post.Title,
+                    Description = post.Description,
+                    CreateDate = post.CreateDate.ToString("dd/MM/yyyy HH:mm"),
+                    UpdateDate = post.UpdateDate?.ToString("dd/MM/yyyy HH:mm") ?? "-"
+                };
             }
 
             Parallel.ForEach(command.ValidationResult.Errors, async error =>

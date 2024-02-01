@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Application.Boudary.Post;
+using FluentValidation;
 
 namespace Application.Command.User.Validation
 {

@@ -11,9 +11,6 @@ using Microsoft.IdentityModel.Tokens;
 using Repository;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using System.Xml.Linq;
 
 namespace Application.Handler.Authentication
 {
@@ -37,7 +34,7 @@ namespace Application.Handler.Authentication
             if (command.IsValid())
             {
                 await _userRepository
-                       .BeginTransactionAsync(true)
+                       .BeginTransactionAsync(false)
                        .ConfigureAwait(false);
 
                 var encryptedPassword = _sha.Encrypt(command.Input.Password);
@@ -87,7 +84,7 @@ namespace Application.Handler.Authentication
 
             Parallel.ForEach(command.ValidationResult.Errors, async error =>
             {
-                await ApplyErrorAsync(command.MessageType, error.ErrorMessage).ConfigureAwait(false);
+                await ApplyErrorAsync(error.ErrorMessage, command.MessageType).ConfigureAwait(false);
             });
 
             return null;

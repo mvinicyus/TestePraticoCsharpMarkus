@@ -6,6 +6,7 @@ namespace Domain.Entity.User
     {
         public int IdUser { get; set; }
         public DateTime CreateDate { get; set; }
+        public string Title { get; set; }
         public string Description { get; set; }
         public DateTime? UpdateDate { get; set; }
         public bool Active { get; set; }

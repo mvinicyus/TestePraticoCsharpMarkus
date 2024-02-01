@@ -143,7 +143,7 @@ namespace Infrastructure.Middleware.Authentication
                 Token = bearerContext,
                 RefreshToken = refreshTokenContext,
                 Email = claims.Get(ClaimTypes.Name),
-                Id = Convert.ToInt64(claims.Get(ClaimTypes.PrimarySid))
+                Id = Convert.ToInt32(claims.Get(ClaimTypes.PrimarySid))
             };
         }
 
@@ -189,6 +189,10 @@ namespace Infrastructure.Middleware.Authentication
             }
             var refreshTokenClaims = new JwtSecurityTokenHandler()?.ValidateToken(refreshToken, GenTokenValidationParameters(), out _);
             var refreshTokenExpire = refreshTokenClaims?.FindFirstValue(ClaimTypes.Expiration);
+            if (refreshTokenExpire == null)
+            {
+                return default;
+            }
             var refreshTokenExpireDate = DateTime.ParseExact(refreshTokenExpire, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
             return refreshTokenExpireDate;
         }

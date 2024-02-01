@@ -10,7 +10,7 @@ namespace Repository.Mapping
         {
             public void Configure(EntityTypeBuilder<PostEntity> builder)
             {
-                builder.ToTable("Budgets");
+                builder.ToTable("Posts");
 
                 builder.HasKey(x => x.Id);
                 builder.Property(x => x.Id)
@@ -18,7 +18,8 @@ namespace Repository.Mapping
 
                 builder.Property(x => x.IdUser).IsRequired();
                 builder.Property(x => x.CreateDate).IsRequired();
-                builder.Property(x => x.Description);
+                builder.Property(x => x.Title).IsRequired();
+                builder.Property(x => x.Description).IsRequired();
                 builder.Property(x => x.UpdateDate);
                 builder.Property(x => x.Active).IsRequired();
             }
