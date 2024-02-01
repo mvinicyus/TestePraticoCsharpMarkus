@@ -2,6 +2,7 @@ using Application.Boudary.User;
 using Application.Command.Authentication;
 using Application.Command.User;
 using Application.Handler.Authentication;
+using Application.Handler.Post;
 using Application.Handler.User;
 using Domain.Interface.Cryptography;
 using Infrastructure.Filter;
