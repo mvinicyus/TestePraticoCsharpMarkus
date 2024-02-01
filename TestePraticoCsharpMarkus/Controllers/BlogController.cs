@@ -43,7 +43,7 @@ namespace TestePraticoCsharpMarkus.Controllers
         }
 
         [Authorize]
-        [HttpDelete("delete")]
+        [HttpDelete("")]
         public async Task<IActionResult> Delete(int id)
         {
             var input = new DeletePostInput
